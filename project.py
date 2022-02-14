@@ -1,7 +1,7 @@
 import hou
 import os
 # from hutil.Qt import QtWidgets
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtUiTools
 
 print("loading project")
 
@@ -9,6 +9,10 @@ class ProjectManager(QtWidgets.QWidget):
     def __init__(self):
         super(ProjectManager, self).__init__()
         self.proj = hou.getenv('JOB') + '/'
+
+        #Load UI file
+        loader = QtUiTools.QUiLoader()
+        self.ui = loader.load("C:/Users/Gilles AVRAAM/Documents/houdini19.0/scripts/python/projectManager/projetManager.ui")
         # Create Widget
         self.labelTitle = QtWidgets.QLabel('Project Manager :')
         self.label = QtWidgets.QLabel(self.proj)
@@ -19,12 +23,15 @@ class ProjectManager(QtWidgets.QWidget):
 
         # layout
         mainLayout = QtWidgets.QVBoxLayout()
-        # add widget to layout
-        self.btn = QtWidgets.QPushButton('Click me')
-        mainLayout.addWidget(self.labelTitle)
-        mainLayout.addWidget(self.label)
-        mainLayout.addWidget(self.listwidget)
-        mainLayout.addWidget(self.btn)
+
+        mainLayout.addWidget(self.ui)
+
+        # # add widget to layout
+        # self.btn = QtWidgets.QPushButton('Click me')
+        # mainLayout.addWidget(self.labelTitle)
+        # mainLayout.addWidget(self.label)
+        # mainLayout.addWidget(self.listwidget)
+        # mainLayout.addWidget(self.btn)
 
         self.setLayout(mainLayout)
 
