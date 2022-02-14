@@ -4,7 +4,18 @@ import os
 from PySide2 import QtWidgets, QtUiTools
 
 print("loading project")
-print(hou.getenv('JOB'))
+
+
+def scriptPath():
+    print(hou.getenv('JOB'))
+    Pose = hou.getenv("POSE")
+    a = Pose.split('/')
+    a.remove(a[len(a)-1])
+    newScriptPath = "/".join(a) + str("/")
+
+    return (newScriptPath)
+
+scriptPath = 'C:/Users/Gilles AVRAAM/Documents/houdini19.0/scripts'
 
 
 class ProjectManager(QtWidgets.QWidget):
@@ -17,7 +28,7 @@ class ProjectManager(QtWidgets.QWidget):
 
         # Load UI file
         loader = QtUiTools.QUiLoader()
-        self.ui = loader.load("C:/Users/Gilles AVRAAM/Documents/houdini19.0/scripts/python/projectManager/projetManager.ui")
+        self.ui = loader.load(f'{scriptPath}/python/projectManager/projetManager.ui')
 
         # get UI elements
         self.setproj = self.ui.findChild(QtWidgets.QPushButton, "setproj_btn")
