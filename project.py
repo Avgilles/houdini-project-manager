@@ -4,22 +4,28 @@ import os
 from PySide2 import QtWidgets, QtUiTools
 
 print("loading project")
+print(hou.getenv('JOB'))
+
 
 class ProjectManager(QtWidgets.QWidget):
     def __init__(self):
         super(ProjectManager, self).__init__()
-        self.proj = hou.getenv('JOB') + '/'
+        if(hou.getenv('JOB') == None):
+            self.proj = hou.getenv('HIP') + '/'
+        else:
+            self.proj = hou.getenv('JOB') + '/'
 
-        #Load UI file
+        # Load UI file
         loader = QtUiTools.QUiLoader()
         self.ui = loader.load("C:/Users/Gilles AVRAAM/Documents/houdini19.0/scripts/python/projectManager/projetManager.ui")
-        # Create Widget
-        self.labelTitle = QtWidgets.QLabel('Project Manager :')
-        self.label = QtWidgets.QLabel(self.proj)
-        self.listwidget = QtWidgets.QListWidget()
 
-
-        self.onCreateInterface()
+        # get UI elements
+        self.setproj = self.ui.findChild(QtWidgets.QPushButton, "setproj_btn")
+        self.proj_path = self.ui.findChild(QtWidgets.QLabel, "proj_path")
+        self.proj_name = self.ui.findChild(QtWidgets.QLabel, "proj_name")
+        self.scene_list = self.ui.findChild(QtWidgets.QListWidget, "scene_list")
+        # create connection
+        self.setproj.clicked.connect(self.setproject)
 
         # layout
         mainLayout = QtWidgets.QVBoxLayout()
@@ -35,20 +41,38 @@ class ProjectManager(QtWidgets.QWidget):
 
         self.setLayout(mainLayout)
 
+    def setproject(self):
+        setjob = hou.ui.selectFile(title="Set Project", file_type=hou.fileType.Directory)
+        print(setjob)
+
+        hou.hscript("setenv JOB=" + setjob)
+        self.proj = hou.getenv('JOB')
+
+        proj_name = setjob.split('/')[-2]
+        setjob = os.path.dirname(setjob)
+        proj_path = os.path.split(setjob[0])
+
+        # print(setjob)
+        # print(proj_name)
+        # print(proj_path)
+        self.proj_name.setText(proj_name)
+        self.proj_path.setText(str(setjob))
+
+        self.onCreateInterface()
 
     def openScene(self, item):
         print('open ' + item.data())
         hipFile = self.proj + item.data()
         print(hipFile)
         hou.hipFile.load(hipFile)
-    
-    
+
     def onCreateInterface(self):
         print("creating interface")
-
+        self.scene_list.clear()
 
         for file in os.listdir(self.proj):
             if file.endswith('.hip'):
-                self.listwidget.addItem(file)
-    
-        self.listwidget.doubleClicked.connect(self.openScene)
+                self.scene_list.addItem(file)
+
+        self.scene_list.doubleClicked.connect(self.openScene)
+
