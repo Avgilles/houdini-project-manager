@@ -1,11 +1,12 @@
 import hou
 import os
 # from hutil.Qt import QtWidgets
-from PySide2 import QtWidgets, QtUiTools
+from PySide2 import QtUiTools , QtWidgets
+
 
 print("loading project")
 
-
+"""
 def scriptPath():
     print(hou.getenv('JOB'))
     Pose = hou.getenv("POSE")
@@ -15,8 +16,8 @@ def scriptPath():
 
     return (newScriptPath)
 
+"""
 scriptPath = 'C:/Users/Gilles AVRAAM/Documents/houdini19.0/scripts'
-
 
 class ProjectManager(QtWidgets.QWidget):
     def __init__(self):
@@ -35,6 +36,8 @@ class ProjectManager(QtWidgets.QWidget):
         self.proj_path = self.ui.findChild(QtWidgets.QLabel, "proj_path")
         self.proj_name = self.ui.findChild(QtWidgets.QLabel, "proj_name")
         self.scene_list = self.ui.findChild(QtWidgets.QListWidget, "scene_list")
+        self.rename_btn = self.ui.findChild(QtWidgets.QPushButton, "rename_btn")
+
         # create connection
         self.setproj.clicked.connect(self.setproject)
 
@@ -71,6 +74,14 @@ class ProjectManager(QtWidgets.QWidget):
 
         self.onCreateInterface()
 
+    def lanchPopup(self, item):
+        pop = Popup(item, self)
+        pop.show()
+
+    def changeName(self, file):
+        print(file)
+        return ("newfile"+file)
+
     def openScene(self, item):
         print('open ' + item.data())
         hipFile = self.proj + item.data()
@@ -84,6 +95,14 @@ class ProjectManager(QtWidgets.QWidget):
         for file in os.listdir(self.proj):
             if file.endswith('.hip'):
                 self.scene_list.addItem(file)
+                print(file)
 
         self.scene_list.doubleClicked.connect(self.openScene)
+        print(self.scene_list)
+        self.rename_btn.clicked.connect(self.lanchPopup(self.scene_list))
 
+class Popup(QtWidgets.QDialog):
+    def __init__(self, name, parent):
+        super().__init__(parent)
+        self.resize(600,300)
+        self.label = QtWidgets.QLabel(name, self)

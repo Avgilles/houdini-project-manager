@@ -216,9 +216,9 @@
         <number>8</number>
        </property>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="rename_btn">
          <property name="text">
-          <string>PushButton</string>
+          <string>Rename</string>
          </property>
         </widget>
        </item>
